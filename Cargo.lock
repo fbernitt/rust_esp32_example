@@ -91,6 +91,7 @@ dependencies = [
  "esp-idf-sys",
  "esp_idf",
  "esp_idf_build",
+ "glob",
 ]
 
 [[package]]
