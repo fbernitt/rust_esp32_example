@@ -6,7 +6,6 @@ use esp_idf_logger;
 use log;
 
 const LED : u32 = 2;
-const TICK_PERIOD_MS : idf::TickType_t = 1000 / idf::configTICK_RATE_HZ;
 
 #[no_mangle]
 pub fn app_main() {
@@ -31,7 +30,7 @@ pub fn app_main() {
         } else {
             led_on = true;
         }
-	sleep(1000);
+	light_sleep(1000000);
     }
 }
 
@@ -56,8 +55,14 @@ fn enable_status_led(enable : bool) {
   }
 }
 
-fn sleep(duration_ms : u32) {
-    unsafe {
-      idf::vTaskDelay(duration_ms / TICK_PERIOD_MS);
-    }
+fn light_sleep(duration_us : u64) {
+        unsafe {
+            // Set RTC timer to trigger wakeup and then enter light sleep
+            // idf::esp_sleep_enable_timer_wakeup(25000);
+            idf::gpio_hold_en(LED);
+            idf::esp_sleep_enable_timer_wakeup(duration_us);
+            idf::esp_light_sleep_start();
+            idf::gpio_hold_dis(LED);
+  log::info!("awoke because of {}", idf::esp_sleep_get_wakeup_cause());
+        }
 }
