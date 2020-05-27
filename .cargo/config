@@ -32,7 +32,6 @@ rustflags = [
   "-C", "link-arg=-lasio",
   "-C", "link-arg=-lbootloader_support",
 #  "-C", "link-arg=-lbt",
-  "-C", "link-arg=-lc",
   "-C", "link-arg=-lcoap",
   "-C", "link-arg=-lcoexist",
   "-C", "link-arg=-lconsole",
@@ -61,7 +60,6 @@ rustflags = [
   "-C", "link-arg=-lfatfs",
   "-C", "link-arg=-lfreemodbus",
   "-C", "link-arg=-lfreertos",
-  "-C", "link-arg=-lgcc",
   "-C", "link-arg=-lgcov",
   "-C", "link-arg=-lhal",
   "-C", "link-arg=-lheap",
@@ -78,7 +76,6 @@ rustflags = [
   "-C", "link-arg=-lmesh",
   "-C", "link-arg=-lmqtt",
   "-C", "link-arg=-lnet80211",
-  "-C", "link-arg=-lnewlib",
   "-C", "link-arg=-lnghttp",
   "-C", "link-arg=-lnvs_flash",
   "-C", "link-arg=-lopenssl",
@@ -104,6 +101,10 @@ rustflags = [
   "-C", "link-arg=-lwpa_supplicant",
   "-C", "link-arg=-lxtensa",
 
+  "-C", "link-arg=-lnewlib",
+  "-C", "link-arg=-lc",
+  # "-C", "link-arg=-lgcc",
+
   # NOTE: The order of these matter.  Otherwise you get:
   # - "redeclaration of memory region"
   # - "redefinition of memory region alias"
@@ -115,7 +116,7 @@ rustflags = [
   "-C", "link-arg=-Tesp32.rom.syscalls.ld",
   "-C", "link-arg=-Tesp32.rom.newlib-data.ld",
   "-C", "link-arg=-Tesp32.rom.newlib-funcs.ld",
-  
+
   "-C", "link-arg=-Wl,--undefined=uxTopUsedPriority",
 
   "-C", "link-arg=-Wl,--end-group",
