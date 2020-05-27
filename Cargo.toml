@@ -11,6 +11,7 @@ esp_idf = "0.1"
 esp-idf-sys = "0.1"
 esp_idf_logger = "0.1"
 log = "0.4"
+esp-idf-alloc = "0.1.1"
 
 [build-dependencies]
 glob = "0.3"

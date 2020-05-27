@@ -1,14 +1,25 @@
 #![no_std]
 #![no_main]
+#![feature(alloc_error_handler)]
 
 use esp_idf_sys as idf;
 use esp_idf_logger;
 use log;
 
+extern crate alloc;
+use alloc::vec::Vec;
+
+mod alloc_support;
+
 const LED : u32 = 2;
 
 #[no_mangle]
 pub fn app_main() {
+    let mut vec = Vec::<u32>::new();
+    for i in 1..100 {
+      vec.push(i);
+    }
+
     esp_idf_logger::init().unwrap();
     log::info!("Hello with logger");
 
