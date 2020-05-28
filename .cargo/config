@@ -103,7 +103,7 @@ rustflags = [
 
   "-C", "link-arg=-lnewlib",
   "-C", "link-arg=-lc",
-  # "-C", "link-arg=-lgcc",
+  "-C", "link-arg=-lgcc",
 
   # NOTE: The order of these matter.  Otherwise you get:
   # - "redeclaration of memory region"

@@ -12,6 +12,8 @@ extern crate alloc;
 use alloc::vec::Vec;
 
 mod alloc_support;
+mod wifi;
+use crate::wifi::start_wifi;
 
 const STATUS_LED: u32 = 2;
 
@@ -23,6 +25,7 @@ pub fn app_main() {
 
     dump_tasks();
     alloc_on_heap();
+    start_wifi();
 
     unsafe {
         idf::gpio_set_direction(STATUS_LED, idf::GPIO_MODE_DEF_OUTPUT); // enable STATUS_LED
