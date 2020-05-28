@@ -32,7 +32,7 @@ task_flash() {
 }
 
 task_format() {
-  rustfmt src/main.rs
+  rustfmt src/main.rs build.rs
 
   _process_command_chain "$@"
 }

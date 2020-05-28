@@ -1,7 +1,6 @@
 use esp_idf_build as build;
 use std::{env, path::PathBuf};
 
-
 // Add ESP-IDF native library search paths to rustc.
 pub fn print_link_search() {
     let target_arch = env::var("CARGO_CFG_TARGET_ARCH").unwrap();
@@ -104,8 +103,10 @@ pub fn print_link_search() {
         .iter()
         .map(|subdir| esp_idf_dir.join(subdir));
 
-
-        for dir in build_dirs.chain(idf_components).chain(idf_components_project) {
+        for dir in build_dirs
+            .chain(idf_components)
+            .chain(idf_components_project)
+        {
             println!("cargo:rustc-link-search=native={}", dir.display());
         }
     }
