@@ -1,5 +1,5 @@
 use esp_idf_build as build;
-use std::{env, path::PathBuf, process, sync::mpsc, thread, time};
+use std::{env, path::PathBuf};
 
 
 // Add ESP-IDF native library search paths to rustc.
