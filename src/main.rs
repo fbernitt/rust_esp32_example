@@ -2,6 +2,8 @@
 #![no_main]
 #![feature(alloc_error_handler)]
 
+use core::mem::ManuallyDrop;
+use cstr_core::CStr;
 use esp_idf_logger;
 use esp_idf_sys as idf;
 use log;
@@ -15,12 +17,14 @@ const LED: u32 = 2;
 
 #[no_mangle]
 pub fn app_main() {
+    esp_idf_logger::init().unwrap();
+
+    dump_tasks();
     let mut vec = Vec::<u32>::new();
     for i in 1..100 {
         vec.push(i);
     }
 
-    esp_idf_logger::init().unwrap();
     log::info!("Hello with logger");
 
     // log manually
@@ -75,5 +79,33 @@ fn light_sleep(duration_us: u64) {
         idf::esp_light_sleep_start();
         idf::gpio_hold_dis(LED);
         log::info!("awoke because of {}", idf::esp_sleep_get_wakeup_cause());
+    }
+}
+
+fn dump_tasks() {
+    let mut tasks_buffer = ManuallyDrop::new(Vec::<idf::TaskStatus_t>::with_capacity(20));
+    let mut runtime: u32 = 0;
+    let cap = tasks_buffer.capacity();
+    let buffer = tasks_buffer.as_mut_ptr();
+
+    unsafe {
+        let count = idf::uxTaskGetSystemState(
+            buffer as *mut idf::TaskStatus_t,
+            cap as u32,
+            &mut runtime as *mut u32,
+        ) as usize;
+        let tasks = Vec::from_raw_parts(buffer, count, cap);
+        for i in 0..count {
+            let task = tasks[i];
+            log::info!(
+                "{}. task: {}: {:?} ({}), min stack: {}",
+                i,
+                task.xTaskNumber,
+                CStr::from_ptr(task.pcTaskName).to_str(),
+                task.ulRunTimeCounter,
+                task.usStackHighWaterMark
+            );
+        }
+        log::info!("total runtime ticks: {}", runtime);
     }
 }
