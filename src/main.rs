@@ -13,31 +13,22 @@ use alloc::vec::Vec;
 
 mod alloc_support;
 
-const LED: u32 = 2;
+const STATUS_LED: u32 = 2;
 
 #[no_mangle]
 pub fn app_main() {
     esp_idf_logger::init().unwrap();
 
+    log::info!("Hello from main");
+
     dump_tasks();
-    let mut vec = Vec::<u32>::new();
-    for i in 1..100 {
-        vec.push(i);
-    }
+    alloc_on_heap();
 
-    log::info!("Hello with logger");
-
-    // log manually
     unsafe {
-        let text = b"Hello World\n\0";
-        idf::printf(text.as_ptr() as *const _);
-
-        // enable LED
-        idf::gpio_set_direction(LED, idf::GPIO_MODE_DEF_OUTPUT);
+        idf::gpio_set_direction(STATUS_LED, idf::GPIO_MODE_DEF_OUTPUT); // enable STATUS_LED
     }
 
     let mut led_on: bool = true;
-
     loop {
         enable_status_led(led_on);
         if led_on {
@@ -63,9 +54,9 @@ fn panic(_info: &core::panic::PanicInfo) -> ! {
 fn enable_status_led(enable: bool) {
     unsafe {
         if enable {
-            idf::gpio_set_level(LED, 1);
+            idf::gpio_set_level(STATUS_LED, 1);
         } else {
-            idf::gpio_set_level(LED, 0);
+            idf::gpio_set_level(STATUS_LED, 0);
         }
     }
 }
@@ -73,12 +64,18 @@ fn enable_status_led(enable: bool) {
 fn light_sleep(duration_us: u64) {
     unsafe {
         // Set RTC timer to trigger wakeup and then enter light sleep
-        // idf::esp_sleep_enable_timer_wakeup(25000);
-        idf::gpio_hold_en(LED);
+        idf::gpio_hold_en(STATUS_LED); // ensure LED keeps state during sleep
         idf::esp_sleep_enable_timer_wakeup(duration_us);
         idf::esp_light_sleep_start();
-        idf::gpio_hold_dis(LED);
+        idf::gpio_hold_dis(STATUS_LED); // allow LED to change state again
         log::info!("awoke because of {}", idf::esp_sleep_get_wakeup_cause());
+    }
+}
+
+fn alloc_on_heap() {
+    let mut vec = Vec::<u32>::new();
+    for i in 1..100 {
+        vec.push(i);
     }
 }
 
